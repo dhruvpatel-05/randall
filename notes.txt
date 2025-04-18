@@ -1,0 +1,126 @@
+
+Dhruv Patel CS35L Assignment 6
+
+Downloading Starter Code:
+I ran the following commands in terminal after logging into SEASNET servers:
+mkdir randall
+cd randall
+wget https://web.cs.ucla.edu/classes/winter25/cs35L/assign/randall-git.tgz
+tar -xzvf randall-git.tgz
+git reset --hard
+
+These commands give us 4 files:
+COPYING, randall-git.tgz, Makefile, and randall.c.
+
+After this, I entered the make command to compile the starter code given to us.
+Next, I added the provided unit test to my Makefile.
+Then, I made my first commit.
+
+Made a second commit to make sure there were < 100 columns per line.
+
+Refactoring:
+
+Updated Makefile to allow refactoring with the following:
+
+# Relevant files.
+FILES = $(wildcard *.c) $(wildcard *.h)
+
+randall: randall.c $(FILES)
+
+so that all necessary files are used during compilation
+
+Comments: make sure to get rid of static when necessary
+and eliminate code in randall.c as you refactor it.
+
+Started with rand64-hw.c and rand64-hw.h
+ - I moved all hardware functions from randall.c to rand64-hw.c
+ - Then I split up code into the .h file where .h was included in .c
+ - In THE .h file I included <cpuid.h> and <immintrin.h>
+
+Once I implemented these, I erased the hardware code from randall.c,
+then I compiled the code before commiting again.
+
+Moved onto rand64-sw.c and rand64-sw.h
+ - I moved all software functions from randall.c to rand64-sw.c
+ - Then I split up code into the .h file where .h was included in .c
+ - Include <stdio.h> and <stdlib.h> in .h
+
+Committed.
+
+Moved onto output.c and output.h
+ - Moved the writebytes function to these files
+ - Then I split up code into the .h file where .h was included in .c
+ - Include <limits.h>, <stdbool.h>, and <stdio.h> in h
+
+Committed.
+
+Created empty options.c and options.h files for now
+
+Committed.
+
+Next, I added a basic implementation of getopt in main of randall.c.
+To do this, I used a while loop with a switch statement checking for 'i',
+'o', and '?'.
+
+Committed.
+
+Next, I added the handlenbytes function to options.
+To do this, I took this part of the code from randall.c,
+and simply added it to options with a few changes to
+account for the different file.
+
+Committed.
+
+Next, add handle_output function to output files based on LA Guide.
+Follow starter code for basic implementation of this function.
+I copied and pasted chunks of code from randall.c to fill out the
+starter code before testing.
+
+Committed.
+
+I had to error test a bit and modify handle_output to use argv[optind]
+instead of argv[1].
+
+Committed.
+
+Next, I worked on implementing /F option for input
+To do this I modified rand64-sw to make a different init for file inputs.
+Then I modified handle_output to check for case where input is a file path.
+After some error testing, this part was complete.
+
+Committed.
+
+Next, I implemented N for output but replacing the else block for output
+in handle_output with the appropriate code. To do this, I allocated a 
+buffer of memory and wrote out to standard output. After error testing,
+this part was complete.
+
+Committed.
+
+Below are some sanity checks:
+
+time dd if=/dev/urandom ibs=8192 obs=8192 count=16384 >/dev/null
+16384+0 records in
+16384+0 records out
+134217728 bytes (134 MB, 128 MiB) copied, 0.517864 s, 259 MB/s
+real    0m0.517s
+user    0m0.020s
+sys     0m0.493s
+
+time ./randall 133562368 >/dev/null
+real    0m3.512s
+user    0m3.155s
+sys     0m0.184s
+
+time ./randall 133562368 | cat >/dev/null
+real    0m3.438s
+user    0m3.335s
+sys     0m0.270s
+
+time ./randall 133562368 >rand.data
+real    0m3.294s
+user    0m3.134s
+sys     0m0.128s
+
+expand Makefile notes.txt *.c *.h |
+  awk '/\r/ || 100 < length' outputs nothing.
